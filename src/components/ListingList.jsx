@@ -1,11 +1,47 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import ListingCard from './ListingCard.jsx';
+import DetailPanel from './DetailPanel.jsx';
+
+const ANIM_MS = 220;
 
 export default function ListingList({ listings, origin, onEdit, onDelete, onRecalculate, tr, lang, distanceUnit }) {
   const [agentFilter, setAgentFilter] = useState('');
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [closingIds, setClosingIds] = useState(new Set());
+  const closeTimers = useRef({});
 
   const agents = [...new Set(listings.map(l => l.agent).filter(Boolean))].sort();
   const filtered = agentFilter ? listings.filter(l => l.agent === agentFilter) : listings;
+
+  const closePanel = (id) => {
+    setClosingIds(prev => new Set([...prev, id]));
+    closeTimers.current[id] = setTimeout(() => {
+      setSelectedIds(prev => prev.filter(sid => sid !== id));
+      setClosingIds(prev => { const next = new Set(prev); next.delete(id); return next; });
+      delete closeTimers.current[id];
+    }, ANIM_MS);
+  };
+
+  const handleSelect = (listing) => {
+    const { id } = listing;
+    if (closeTimers.current[id]) clearTimeout(closeTimers.current[id]);
+
+    if (selectedIds.includes(id)) {
+      if (closingIds.has(id)) {
+        // was closing — reopen
+        setClosingIds(prev => { const next = new Set(prev); next.delete(id); return next; });
+      } else {
+        closePanel(id);
+      }
+    } else {
+      setSelectedIds(prev => [...prev, id]);
+    }
+  };
+
+  useEffect(() => {
+    const timers = closeTimers.current;
+    return () => Object.values(timers).forEach(clearTimeout);
+  }, []);
 
   if (listings.length === 0) {
     return (
@@ -18,9 +54,17 @@ export default function ListingList({ listings, origin, onEdit, onDelete, onReca
 
   return (
     <div className="listing-list">
-      <div className="list-header">
-        <h2 className="list-title">{tr('listingsTitle')}</h2>
-        <span className="list-count">{filtered.length}{agentFilter ? `/${listings.length}` : ''}</span>
+      <div className="listing-top-row">
+        <div className="list-header">
+          <h2 className="list-title">{tr('listingsTitle')}</h2>
+          <span className="list-count">{filtered.length}{agentFilter ? `/${listings.length}` : ''}</span>
+        </div>
+        {selectedIds.length > 0 && (
+          <div className="compare-header">
+            <span className="compare-title">Select &amp; Compare</span>
+            <span className="compare-count">{selectedIds.length}</span>
+          </div>
+        )}
       </div>
 
       {agents.length > 1 && (
@@ -43,19 +87,48 @@ export default function ListingList({ listings, origin, onEdit, onDelete, onReca
         </div>
       )}
 
-      <div className="cards-grid">
-        {filtered.map((listing, i) => (
-          <ListingCard
-            key={listing.id}
-            listing={listing}
-            index={listings.indexOf(listing)}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            onRecalculate={onRecalculate}
-            tr={tr}
-            distanceUnit={distanceUnit}
-          />
-        ))}
+      <div className="listing-list-layout">
+        <div className="listing-list-main">
+          <div className="cards-grid">
+            {filtered.map((listing) => (
+              <ListingCard
+                key={listing.id}
+                listing={listing}
+                index={listings.indexOf(listing)}
+                isSelected={selectedIds.includes(listing.id) && !closingIds.has(listing.id)}
+                onSelect={handleSelect}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                onRecalculate={onRecalculate}
+                tr={tr}
+                distanceUnit={distanceUnit}
+              />
+            ))}
+          </div>
+        </div>
+
+        {selectedIds.length > 0 && (
+          <div className="detail-panels-column">
+            {selectedIds.map(id => {
+              const listing = listings.find(l => l.id === id);
+              if (!listing) return null;
+              return (
+                <div
+                  key={id}
+                  className={`detail-panel-wrap${closingIds.has(id) ? ' detail-panel-wrap--closing' : ''}`}
+                >
+                  <DetailPanel
+                    listing={listing}
+                    index={listings.indexOf(listing)}
+                    onClose={() => closePanel(id)}
+                    tr={tr}
+                    distanceUnit={distanceUnit}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

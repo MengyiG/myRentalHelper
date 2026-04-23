@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { markerColor } from '../utils/distance.js';
+import { agentColor } from '../utils/distance.js';
 
 const statusIcons = {
   pending: '⏳',
@@ -9,14 +8,13 @@ const statusIcons = {
   geocodeError: '⚠️',
 };
 
-export default function ListingCard({ listing, index, onEdit, onDelete, onRecalculate, tr, distanceUnit = 'km' }) {
-  const [expanded, setExpanded] = useState(false);
-
-  const color = markerColor(index);
+export default function ListingCard({ listing, index, isSelected, onSelect, onEdit, onDelete, onRecalculate, tr, distanceUnit = 'km' }) {
   const { id, agent, address, type, price, priceMax, includesUtilities,
-    amenities, pros, cons, moveInDate, description, distance, commute, status, geocodeError, resolvedAddress } = listing;
+    amenities, moveInDate, distance, commute, status, geocodeError } = listing;
+  const color = agentColor(agent);
 
-  const handleDelete = () => {
+  const handleDelete = (e) => {
+    e.stopPropagation();
     if (window.confirm(tr('confirmDelete'))) onDelete(id);
   };
 
@@ -44,14 +42,27 @@ export default function ListingCard({ listing, index, onEdit, onDelete, onRecalc
   const idNum = id.replace(/\D/g, '');
 
   return (
-    <article className="listing-card" onClick={() => setExpanded(v => !v)} style={{ cursor: 'pointer' }}>
+    <article
+      className={`listing-card${isSelected ? ' listing-card--selected' : ''}`}
+      onClick={() => onSelect(listing)}
+      style={{ cursor: 'pointer' }}
+    >
       {/* Hero */}
       <div
         className="card-hero"
         style={{ background: `linear-gradient(145deg, ${color} 0%, ${color}CC 100%)` }}
       >
+        <div className="card-hero-top">
+          {isSelected ? (
+            <span className="card-check">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </span>
+          ) : <span />}
+          <span className="card-hero-badge">{id}</span>
+        </div>
         <span className="card-hero-agent">{agent || '—'}</span>
-        <span className="card-hero-badge">{id}</span>
         <span className="card-hero-watermark">{idNum}</span>
       </div>
 
@@ -149,93 +160,21 @@ export default function ListingCard({ listing, index, onEdit, onDelete, onRecalc
               <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
             </svg>
           </button>
-          <button className="expand-btn" onClick={() => setExpanded(v => !v)}>
+          <button
+            className="expand-btn"
+            onClick={e => { e.stopPropagation(); onSelect(listing); }}
+            title={isSelected ? '关闭详情' : '查看详情'}
+          >
             <svg
               width="14" height="14" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" strokeWidth="2"
-              style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
+              style={{ transform: isSelected ? 'rotate(90deg)' : 'rotate(-90deg)', transition: 'transform 0.2s' }}
             >
-              <polyline points="6 9 12 15 18 9"/>
+              <polyline points="9 18 15 12 9 6"/>
             </svg>
           </button>
         </div>
       </div>
-
-      {/* Expanded details */}
-      {expanded && (
-        <div className="card-details">
-          {resolvedAddress && (
-            <div className="resolved-address-row">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
-              <span className="resolved-label">{tr('resolvedAs')}</span>
-              <span className="resolved-text">{resolvedAddress.split(',').slice(0, 5).join(',')}</span>
-            </div>
-          )}
-
-          {amenities?.length > 0 && (
-            <div className="detail-section">
-              <span className="detail-label">{tr('amenities')}</span>
-              <div className="tag-list">
-                {amenities.map((a, i) => <span key={i} className="tag">{a}</span>)}
-              </div>
-            </div>
-          )}
-
-          <div className="detail-two-col">
-            {pros?.length > 0 && (
-              <div className="detail-section">
-                <span className="detail-label pros-label">✓ {tr('pros')}</span>
-                <ul className="bullet-list pros">
-                  {pros.map((p, i) => <li key={i}>{p}</li>)}
-                </ul>
-              </div>
-            )}
-            {cons?.length > 0 && (
-              <div className="detail-section">
-                <span className="detail-label cons-label">✗ {tr('cons')}</span>
-                <ul className="bullet-list cons">
-                  {cons.map((c, i) => <li key={i}>{c}</li>)}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          {description && (
-            <div className="detail-section">
-              <span className="detail-label">{tr('description')}</span>
-              <p className="detail-desc">{description}</p>
-            </div>
-          )}
-
-          {!geocodeError && (safeWalk != null || commute?.driving != null) && (
-            <div className="detail-section">
-              <span className="detail-label">{tr('commute')}</span>
-              <div className="commute-detailed">
-                <div className="commute-card">
-                  <span className="commute-icon-big">🚶</span>
-                  <span className="commute-mode">{tr('walking')}</span>
-                  <span className="commute-time">{safeWalk ?? '—'} {tr('min')}</span>
-                </div>
-                <div className="commute-card">
-                  <span className="commute-icon-big">🚌</span>
-                  <span className="commute-mode">{tr('transit')}</span>
-                  <span className="commute-time">{commute?.transit ?? '—'} {tr('min')}</span>
-                  <span className="commute-est">{tr('transitNote')}</span>
-                </div>
-                <div className="commute-card">
-                  <span className="commute-icon-big">🚗</span>
-                  <span className="commute-mode">{tr('driving')}</span>
-                  <span className="commute-time">{commute?.driving ?? '—'} {tr('min')}</span>
-                </div>
-              </div>
-              <p className="commute-disclaimer">{tr('commuteDisclaimer')}</p>
-            </div>
-          )}
-        </div>
-      )}
     </article>
   );
 }

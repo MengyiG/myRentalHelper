@@ -29,3 +29,12 @@ export const MARKER_COLORS = [
 export function markerColor(index) {
   return MARKER_COLORS[index % MARKER_COLORS.length];
 }
+
+export function agentColor(agentName) {
+  if (!agentName) return MARKER_COLORS[0];
+  let hash = 0;
+  for (let i = 0; i < agentName.length; i++) {
+    hash = (hash * 31 + agentName.charCodeAt(i)) >>> 0;
+  }
+  return MARKER_COLORS[hash % MARKER_COLORS.length];
+}
