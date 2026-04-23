@@ -90,6 +90,17 @@ Output is in `dist/` — deploy as a static site.
 - Transit commute times are estimated from straight-line distance, not real-time data
 - OSRM routing may differ from Google Maps and does not include live traffic
 
+
+## todo
+
+- [ ] **Share** — Generate a shareable read-only link so roommates or family can view your shortlist without needing an account
+- [ ] **Export as PDF** — One-click PDF report of all listings with map, commute summary, pros/cons, and price comparison
+- [ ] **Listing status** — Track each listing through stages: Interested → Visited → Applied → Offered → Rejected
+- [ ] **AI ranking** — Let Claude score and rank listings against your stated priorities (budget, commute, amenities)
+- [ ] **Photo attachments** — Attach photos from apartment tours to each listing card
+- [ ] **Neighborhood score** — Pull walkability, transit, and safety scores for each address automatically
+- [ ] **Mobile / PWA** — Install as a home screen app on phone for quick access during in-person tours
+
 ---
 
 # Yisy - 找房很容易
@@ -177,3 +188,13 @@ npm run build
 - Anthropic API Key 直接从浏览器发起请求，需在 Anthropic 控制台开启 `dangerous-direct-browser-access`
 - 公交通勤时间为基于直线距离的估算值，非实时数据
 - OSRM 路线数据可能与 Google Maps 有差异，不含实时路况
+
+## 路线图
+
+- [ ] **分享** — 生成只读分享链接，让室友或家人无需登录即可查看你的房源列表
+- [ ] **导出 PDF** — 一键生成包含地图、通勤摘要、优缺点和价格对比的 PDF 报告
+- [ ] **房源状态** — 跟踪每个房源的进度：感兴趣 → 已看房 → 已申请 → 已报价 → 已拒绝
+- [ ] **AI 排名** — 让 Claude 根据你的优先级（预算、通勤、配套）对房源打分排序
+- [ ] **照片附件** — 为每个房源卡片附上看房时拍的照片
+- [ ] **社区评分** — 自动获取每个地址的步行指数、交通和安全评分
+- [ ] **手机端 / PWA** — 支持安装到手机主屏，方便看房时随时查阅
