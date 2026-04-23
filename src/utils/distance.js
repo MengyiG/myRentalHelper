@@ -21,9 +21,9 @@ export function estimateTransitTime(distanceKm) {
 
 // Generate a deterministic color from index
 export const MARKER_COLORS = [
-  '#546B41', '#2E7D32', '#1565C0', '#6A1B9A',
-  '#AD1457', '#E65100', '#4E342E', '#00695C',
-  '#37474F', '#283593'
+  '#4D6FA5', '#2E5FA3', '#7B9FD4', '#385490',
+  '#5B7FBD', '#3A5A8A', '#6C8EC8', '#2D4E80',
+  '#8AAACE', '#1E3A6E'
 ];
 
 export function markerColor(index) {

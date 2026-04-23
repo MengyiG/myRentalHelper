@@ -23,6 +23,7 @@ function generateId(existingListings) {
 export default function App() {
   const [lang, setLang] = useState(() => localStorage.getItem('rh_lang') || 'zh');
   const [theme, setTheme] = useState(() => localStorage.getItem('rh_theme') || 'light');
+  const [distanceUnit, setDistanceUnit] = useState(() => localStorage.getItem('rh_unit') || 'km');
   const [apiKey, setApiKey] = useState(() => localStorage.getItem('rh_apikey') || '');
   const [scriptUrl, setScriptUrl] = useState(() => localStorage.getItem('rh_script_url') || '');
   const [view, setView] = useState('list');
@@ -54,6 +55,7 @@ export default function App() {
   // Device preferences → always localStorage
   useEffect(() => { localStorage.setItem('rh_lang', lang); }, [lang]);
   useEffect(() => { localStorage.setItem('rh_theme', theme); }, [theme]);
+  useEffect(() => { localStorage.setItem('rh_unit', distanceUnit); }, [distanceUnit]);
   useEffect(() => { localStorage.setItem('rh_apikey', apiKey); }, [apiKey]);
   useEffect(() => { localStorage.setItem('rh_script_url', scriptUrl); }, [scriptUrl]);
 
@@ -298,11 +300,13 @@ export default function App() {
         view={view}
         apiKey={apiKey}
         scriptUrl={scriptUrl}
+        distanceUnit={distanceUnit}
         onLangChange={l => setLang(l)}
         onThemeChange={t => setTheme(t)}
         onViewChange={v => setView(v)}
         onApiKeyChange={k => setApiKey(k)}
         onScriptUrlChange={handleScriptUrlChange}
+        onUnitChange={u => setDistanceUnit(u)}
         tr={tr}
       />
 
@@ -349,6 +353,7 @@ export default function App() {
               onRecalculate={handleRecalculate}
               tr={tr}
               lang={lang}
+              distanceUnit={distanceUnit}
             />
           ) : (
             <MapView

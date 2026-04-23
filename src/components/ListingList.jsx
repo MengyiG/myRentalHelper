@@ -1,6 +1,6 @@
 import ListingCard from './ListingCard.jsx';
 
-export default function ListingList({ listings, origin, onEdit, onDelete, onRecalculate, tr, lang }) {
+export default function ListingList({ listings, origin, onEdit, onDelete, onRecalculate, tr, lang, distanceUnit }) {
   if (listings.length === 0) {
     return (
       <div className="empty-state">
@@ -26,6 +26,7 @@ export default function ListingList({ listings, origin, onEdit, onDelete, onReca
             onDelete={onDelete}
             onRecalculate={onRecalculate}
             tr={tr}
+            distanceUnit={distanceUnit}
           />
         ))}
       </div>

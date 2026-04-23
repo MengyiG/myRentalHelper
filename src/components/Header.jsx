@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function Header({ lang, theme, view, apiKey, scriptUrl, onLangChange, onThemeChange, onViewChange, onApiKeyChange, onScriptUrlChange, tr }) {
+export default function Header({ lang, theme, view, apiKey, scriptUrl, distanceUnit, onLangChange, onThemeChange, onViewChange, onApiKeyChange, onScriptUrlChange, onUnitChange, tr }) {
   const [showApiInput, setShowApiInput] = useState(false);
   const [keyDraft, setKeyDraft] = useState(apiKey);
   const [showGsInput, setShowGsInput] = useState(false);
@@ -74,6 +74,18 @@ export default function Header({ lang, theme, view, apiKey, scriptUrl, onLangCha
             </svg>
           )}
         </button>
+
+        {/* Distance unit toggle */}
+        <div className="toggle-group">
+          <button
+            className={`toggle-btn ${distanceUnit === 'km' ? 'active' : ''}`}
+            onClick={() => onUnitChange('km')}
+          >km</button>
+          <button
+            className={`toggle-btn ${distanceUnit === 'mi' ? 'active' : ''}`}
+            onClick={() => onUnitChange('mi')}
+          >mi</button>
+        </div>
 
         {/* Language toggle */}
         <button

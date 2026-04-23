@@ -9,19 +9,7 @@ const statusIcons = {
   geocodeError: '⚠️',
 };
 
-function CommuteRow({ icon, label, value, note, tr }) {
-  if (value == null) return null;
-  return (
-    <span className="commute-item">
-      <span className="commute-icon">{icon}</span>
-      <span className="commute-label">{label}</span>
-      <span className="commute-value">{value} {tr('min')}</span>
-      {note && <span className="commute-note">{note}</span>}
-    </span>
-  );
-}
-
-export default function ListingCard({ listing, index, onEdit, onDelete, onRecalculate, tr }) {
+export default function ListingCard({ listing, index, onEdit, onDelete, onRecalculate, tr, distanceUnit = 'km' }) {
   const [expanded, setExpanded] = useState(false);
 
   const color = markerColor(index);
@@ -32,13 +20,16 @@ export default function ListingCard({ listing, index, onEdit, onDelete, onRecalc
     if (window.confirm(tr('confirmDelete'))) onDelete(id);
   };
 
-  const formatDist = (d) => d != null ? `${d.toFixed(1)} ${tr('km')}` : '—';
+  const formatDist = (d) => {
+    if (d == null) return '—';
+    if (distanceUnit === 'mi') return `${(d * 0.621371).toFixed(1)} ${tr('mi')}`;
+    return `${d.toFixed(1)} ${tr('km')}`;
+  };
+
   const formatPrice = (p) => p != null ? `$${Number(p).toLocaleString()}` : '—';
 
   const isProcessing = status === 'geocoding' || status === 'routing';
 
-  // Sanity-check walking time at render time so stale localStorage data is also corrected.
-  // A human cannot walk faster than 7 km/h; if OSRM/stored value implies that, use 4.5 km/h estimate.
   const safeWalk = (() => {
     const w = commute?.walking;
     if (w == null || !distance) return w;
@@ -46,69 +37,102 @@ export default function ListingCard({ listing, index, onEdit, onDelete, onRecalc
     return w >= minExpected ? w : Math.round(distance / 4.5 * 60);
   })();
 
+  const displayDate = moveInDate
+    ? (moveInDate.includes('T') ? moveInDate.split('T')[0] : moveInDate)
+    : null;
+
+  const idNum = id.replace(/\D/g, '');
+
   return (
-    <article className={`listing-card ${expanded ? 'expanded' : ''}`} style={{ borderTopColor: color }}>
-      <div className="card-header" onClick={() => setExpanded(v => !v)}>
-        <div className="card-id-badge" style={{ background: color }}>{id}</div>
+    <article className="listing-card" onClick={() => setExpanded(v => !v)} style={{ cursor: 'pointer' }}>
+      {/* Hero */}
+      <div
+        className="card-hero"
+        style={{ background: `linear-gradient(145deg, ${color} 0%, ${color}CC 100%)` }}
+      >
+        <span className="card-hero-agent">{agent || '—'}</span>
+        <span className="card-hero-badge">{id}</span>
+        <span className="card-hero-watermark">{idNum}</span>
+      </div>
 
-        <div className="card-main-info">
-          <div className="card-row-1">
-            <span className="card-agent">{agent || '—'}</span>
-            <span className="card-type badge">{type || '—'}</span>
-            {includesUtilities && <span className="badge utility-badge">{tr('includesUtilities')}</span>}
+      {/* Content */}
+      <div className="card-content">
+        {/* Address + Price */}
+        <div className="card-top-row">
+          <div className="card-address-title">{address || '—'}</div>
+          <div className="card-price-block">
+            {priceDiscounted != null ? (
+              <>
+                <span className="price-original-sm">{formatPrice(price)}</span>
+                <span className="price-discounted-lg">{formatPrice(priceDiscounted)}</span>
+              </>
+            ) : price != null ? (
+              <span className="price-main-lg">{formatPrice(price)}</span>
+            ) : null}
+            {price != null && <span className="price-period-sm">{tr('perMonth')}</span>}
           </div>
-          <div className="card-address">{address || '—'}</div>
+        </div>
 
-          <div className="card-row-3">
-            <span className="card-price">
-              {priceDiscounted ? (
-                <>
-                  <span className="price-original">{formatPrice(price)}</span>
-                  <span className="price-discounted">{formatPrice(priceDiscounted)}</span>
-                </>
-              ) : (
-                <span className="price-main">{formatPrice(price)}</span>
-              )}
-              <span className="price-period">{tr('perMonth')}</span>
+        {/* Type + utilities + move-in + distance */}
+        <div className="card-meta-row">
+          {type && <span className="badge">{type}</span>}
+          {includesUtilities && <span className="badge utility-badge">{tr('includesUtilities')}</span>}
+          {displayDate && (
+            <span className="card-movein">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+              {displayDate}
             </span>
-
-            {moveInDate && (
-              <span className="card-movein">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/>
-                  <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-                </svg>
-                {moveInDate}
-              </span>
-            )}
-
-            <span className={`card-distance ${geocodeError ? 'error' : ''}`}>
-              {isProcessing ? (
-                <span className="inline-spinner">{statusIcons[status]} {tr(status === 'geocoding' ? 'geocoding' : 'routing')}</span>
-              ) : geocodeError ? (
-                <span>⚠️ {tr('geocodeError')}</span>
-              ) : (
-                <>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="m13 13 6 6"/>
-                  </svg>
-                  {formatDist(distance)}
-                </>
-              )}
+          )}
+          {!isProcessing && !geocodeError && distance != null && (
+            <span className="card-distance">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/>
+              </svg>
+              {formatDist(distance)}
             </span>
-          </div>
-
-          {/* Compact commute row */}
-          {!isProcessing && !geocodeError && (safeWalk != null || commute?.driving != null) && (
-            <div className="commute-compact">
-              <CommuteRow icon="🚶" label={tr('walking')} value={safeWalk} tr={tr} />
-              <CommuteRow icon="🚌" label={tr('transit')} value={commute?.transit} note={tr('transitNote')} tr={tr} />
-              <CommuteRow icon="🚗" label={tr('driving')} value={commute?.driving} tr={tr} />
-            </div>
+          )}
+          {isProcessing && (
+            <span className="inline-spinner">{statusIcons[status]} {tr(status === 'geocoding' ? 'geocoding' : 'routing')}</span>
+          )}
+          {geocodeError && (
+            <span className="card-distance error">⚠️ {tr('geocodeError')}</span>
           )}
         </div>
 
-        <div className="card-actions" onClick={e => e.stopPropagation()}>
+        {/* Commute pills */}
+        {!isProcessing && !geocodeError && (safeWalk != null || commute?.transit != null || commute?.driving != null) && (
+          <div className="commute-pills">
+            {safeWalk != null && (
+              <span className="commute-pill">
+                <span className="commute-pill-icon">🚶</span>
+                <span className="commute-pill-value">{safeWalk}</span>
+                <span className="commute-pill-unit">{tr('min')}</span>
+              </span>
+            )}
+            {commute?.transit != null && (
+              <span className="commute-pill">
+                <span className="commute-pill-icon">🚌</span>
+                <span className="commute-pill-value">{commute.transit}</span>
+                <span className="commute-pill-unit">{tr('min')}</span>
+                <span className="commute-pill-est">{tr('transitNote')}</span>
+              </span>
+            )}
+            {commute?.driving != null && (
+              <span className="commute-pill">
+                <span className="commute-pill-icon">🚗</span>
+                <span className="commute-pill-value">{commute.driving}</span>
+                <span className="commute-pill-unit">{tr('min')}</span>
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Footer actions */}
+        <div className="card-footer" onClick={e => e.stopPropagation()}>
           {!isProcessing && (
             <button className="icon-btn small" onClick={() => onRecalculate(listing)} title="重新定位 / Re-geocode">↻</button>
           )}
@@ -120,7 +144,8 @@ export default function ListingCard({ listing, index, onEdit, onDelete, onRecalc
           </button>
           <button className="icon-btn small danger" onClick={handleDelete} title={tr('delete')}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
             </svg>
           </button>
           <button className="expand-btn" onClick={() => setExpanded(v => !v)}>
@@ -135,6 +160,7 @@ export default function ListingCard({ listing, index, onEdit, onDelete, onRecalc
         </div>
       </div>
 
+      {/* Expanded details */}
       {expanded && (
         <div className="card-details">
           {resolvedAddress && (
@@ -202,7 +228,6 @@ export default function ListingCard({ listing, index, onEdit, onDelete, onRecalc
                   <span className="commute-icon-big">🚗</span>
                   <span className="commute-mode">{tr('driving')}</span>
                   <span className="commute-time">{commute?.driving ?? '—'} {tr('min')}</span>
-                  <span className="commute-est">{tr('transitNote')}</span>
                 </div>
               </div>
               <p className="commute-disclaimer">{tr('commuteDisclaimer')}</p>

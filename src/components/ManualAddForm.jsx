@@ -111,9 +111,9 @@ export default function ManualAddForm({ initial, apiKey, origin, knownAgents = [
     let text = '';
     try {
       text = await navigator.clipboard.readText();
-      if (!text.trim()) throw new Error('剪切板为空');
+      if (!text.trim()) throw new Error(tr('clipEmpty'));
     } catch (e) {
-      setClipError('无法读取剪切板：' + e.message);
+      setClipError(tr('clipReadError') + e.message);
       setClipState('error');
       return;
     }
@@ -141,7 +141,7 @@ export default function ManualAddForm({ initial, apiKey, origin, knownAgents = [
       }));
       setClipState('idle');
     } catch (e) {
-      setClipError('解析失败：' + e.message);
+      setClipError(tr('clipParseError') + e.message);
       setClipState('error');
     }
   };
@@ -194,20 +194,20 @@ export default function ManualAddForm({ initial, apiKey, origin, knownAgents = [
               )
             }
             <span>
-              {clipState === 'reading' ? '读取中…'
-                : clipState === 'parsing' ? 'AI 解析中…'
-                : apiKey ? '从剪切板读取并解析'
-                : '从剪切板读取'}
+              {clipState === 'reading' ? tr('clipReading')
+                : clipState === 'parsing' ? tr('clipParsing')
+                : apiKey ? tr('clipReadAndParse')
+                : tr('clipRead')}
             </span>
           </button>
-          {!apiKey && <span className="clip-hint">（未设置 API Key，内容显示在下方供参考）</span>}
+          {!apiKey && <span className="clip-hint">{tr('clipNoKeyHint')}</span>}
           {clipError && <span className="clip-error">{clipError}</span>}
         </div>
 
         {clipPreview && !apiKey && (
           <div className="clip-reference">
             <div className="clip-reference-label">
-              剪切板内容（对照填写）
+              {tr('clipPreviewLabel')}
               <button type="button" className="clip-clear" onClick={() => setClipPreview('')}>✕</button>
             </div>
             <pre className="clip-reference-text">{clipPreview}</pre>
@@ -223,7 +223,7 @@ export default function ManualAddForm({ initial, apiKey, origin, knownAgents = [
                 list="agent-suggestions"
                 value={form.agent}
                 onChange={e => set('agent', e.target.value)}
-                placeholder="e.g. John / 张伟"
+                placeholder="e.g. John"
               />
               {knownAgents.length > 0 && (
                 <datalist id="agent-suggestions">
@@ -241,7 +241,7 @@ export default function ManualAddForm({ initial, apiKey, origin, knownAgents = [
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
-                    已确认
+                    {tr('addressConfirmed')}
                   </span>
                 )}
               </label>
