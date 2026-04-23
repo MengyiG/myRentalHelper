@@ -42,6 +42,13 @@ export default function ManualAddForm({ initial, apiKey, origin, knownAgents = [
 
   const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
 
+  // Close modal on Escape
+  useEffect(() => {
+    const handler = (e) => { if (e.key === 'Escape') onCancel(); };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [onCancel]);
+
   // Close dropdown on outside click
   useEffect(() => {
     const handler = (e) => {

@@ -1,4 +1,4 @@
-import { agentColor } from '../utils/distance.js';
+import { agentColor } from '../utils/colors.js';
 
 const statusIcons = {
   pending: '⏳',

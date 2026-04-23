@@ -1,4 +1,4 @@
-import { agentColor } from '../utils/distance.js';
+import { agentColor } from '../utils/colors.js';
 
 export default function DetailPanel({ listing, index, onClose, tr, distanceUnit = 'km' }) {
   if (!listing) return null;
@@ -86,23 +86,29 @@ export default function DetailPanel({ listing, index, onClose, tr, distanceUnit 
         {!geocodeError && (safeWalk != null || commute?.transit != null || commute?.driving != null) && (
           <div className="detail-section">
             <span className="detail-label">{tr('commute')}</span>
-            <div className="commute-detailed">
-              <div className="commute-card">
-                <span className="commute-icon-big">🚶</span>
-                <span className="commute-mode">{tr('walking')}</span>
-                <span className="commute-time">{safeWalk ?? '—'} {tr('min')}</span>
-              </div>
-              <div className="commute-card">
-                <span className="commute-icon-big">🚌</span>
-                <span className="commute-mode">{tr('transit')}</span>
-                <span className="commute-time">{commute?.transit ?? '—'} {tr('min')}</span>
-                <span className="commute-est">{tr('transitNote')}</span>
-              </div>
-              <div className="commute-card">
-                <span className="commute-icon-big">🚗</span>
-                <span className="commute-mode">{tr('driving')}</span>
-                <span className="commute-time">{commute?.driving ?? '—'} {tr('min')}</span>
-              </div>
+            <div className="commute-pills">
+              {safeWalk != null && (
+                <span className="commute-pill">
+                  <span className="commute-pill-icon">🚶</span>
+                  <span className="commute-pill-value">{safeWalk}</span>
+                  <span className="commute-pill-unit">{tr('min')}</span>
+                </span>
+              )}
+              {commute?.transit != null && (
+                <span className="commute-pill">
+                  <span className="commute-pill-icon">🚌</span>
+                  <span className="commute-pill-value">{commute.transit}</span>
+                  <span className="commute-pill-unit">{tr('min')}</span>
+                  <span className="commute-pill-est">{tr('transitNote')}</span>
+                </span>
+              )}
+              {commute?.driving != null && (
+                <span className="commute-pill">
+                  <span className="commute-pill-icon">🚗</span>
+                  <span className="commute-pill-value">{commute.driving}</span>
+                  <span className="commute-pill-unit">{tr('min')}</span>
+                </span>
+              )}
             </div>
             <p className="commute-disclaimer">{tr('commuteDisclaimer')}</p>
           </div>

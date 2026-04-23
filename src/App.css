@@ -232,6 +232,25 @@ body {
 .icon-btn.small.danger:hover { color: var(--cons-color); }
 
 .lang-btn { letter-spacing: 0.5px; font-size: 11px; }
+.add-btn {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.55);
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+.add-btn:hover {
+  background: rgba(255,255,255,0.32);
+  border-color: rgba(255,255,255,0.85);
+  transform: scale(1.1);
+}
 
 /* ===== API Key Dropdown ===== */
 .api-key-wrapper { position: relative; }

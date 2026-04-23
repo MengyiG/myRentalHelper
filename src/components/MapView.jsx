@@ -1,5 +1,5 @@
 import { useEffect, useRef, useMemo, useState } from 'react';
-import { markerColor } from '../utils/distance.js';
+import { markerColor } from '../utils/colors.js';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 

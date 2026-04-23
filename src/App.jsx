@@ -320,6 +320,7 @@ export default function App() {
         onApiKeyChange={k => setApiKey(k)}
         onScriptUrlChange={handleScriptUrlChange}
         onUnitChange={u => setDistanceUnit(u)}
+        onManualAdd={() => { setEditingListing(null); setShowManualForm(true); }}
         tr={tr}
       />
 
