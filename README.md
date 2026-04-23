@@ -1,12 +1,18 @@
-# Rental Helper · 租房助手
+# Yisy · 找房很容易
 
-**[English](#rental-helper) · [中文](#租房助手)**
+**[English](#yisy---find-your-home-easily) · [中文](#yisy---找房很容易)**
 
 ---
 
-# Rental Helper
+# Yisy - Find your home easily!
 
 A personal rental listing manager. Paste chat logs with agents and let AI extract listings automatically, calculate commute times from your origin (workplace, etc.), view listings on a map, and sync everything to Google Sheets.
+
+## Preview
+
+| Card View | Map View |
+|---|---|
+| ![Card view](src/assets/image_cards.png) | ![Map view](src/assets/image_map.png) |
 
 ## Features
 
@@ -86,9 +92,15 @@ Output is in `dist/` — deploy as a static site.
 
 ---
 
-# 租房助手
+# Yisy - 找房很容易
 
 个人租房信息管理工具。将与中介的聊天记录粘贴进来，由 AI 自动提取房源信息，并计算与原点（工作地等）的距离和通勤时间，支持地图查看和 Google Sheets 同步。
+
+## 预览
+
+| 卡片视图 | 地图视图 |
+|---|---|
+| ![卡片视图](src/assets/image_cards.png) | ![地图视图](src/assets/image_map.png) |
 
 ## 功能
 

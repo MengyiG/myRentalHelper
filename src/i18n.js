@@ -1,7 +1,7 @@
 export const t = {
   zh: {
-    appTitle: '租房助手',
-    appSubtitle: '智能租房信息管理',
+    appTitle: 'Yisy',
+    appSubtitle: '找房很容易 - 智能租房信息管理',
     themeLight: '浅色',
     themeDark: '深色',
     viewList: '列表',
@@ -93,10 +93,11 @@ export const t = {
     clipReadError: '无法读取剪切板：',
     clipParseError: '解析失败：',
     addressConfirmed: '已确认',
+    resolvedAs: '定位到：',
   },
   en: {
-    appTitle: 'Rental Helper',
-    appSubtitle: 'Smart Rental Management',
+    appTitle: 'Yisy',
+    appSubtitle: 'Find your home easily - Smart Rental Management',
     themeLight: 'Light',
     themeDark: 'Dark',
     viewList: 'List',
@@ -188,6 +189,7 @@ export const t = {
     clipReadError: 'Could not read clipboard: ',
     clipParseError: 'Parse failed: ',
     addressConfirmed: 'Confirmed',
+    resolvedAs: 'Resolved as:',
   }
 };
 

@@ -170,7 +170,7 @@ export default function ListingCard({ listing, index, onEdit, onDelete, onRecalc
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                 <circle cx="12" cy="10" r="3"/>
               </svg>
-              <span className="resolved-label">定位到：</span>
+              <span className="resolved-label">{tr('resolvedAs')}</span>
               <span className="resolved-text">{resolvedAddress.split(',').slice(0, 5).join(',')}</span>
             </div>
           )}

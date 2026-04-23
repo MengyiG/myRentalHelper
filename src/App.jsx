@@ -11,6 +11,7 @@ import { geocodeAddress } from './services/geocoding.js';
 import { getCommuteTimes } from './services/routing.js';
 import { haversineDistance, estimateTransitTime } from './utils/distance.js';
 import { fetchListings, saveListings, fetchSettings, saveSettings } from './services/googleSheets.js';
+import { SAMPLE_LISTINGS, SAMPLE_ORIGIN } from './sampleData.js';
 
 function generateId(existingListings) {
   const usedIds = new Set(existingListings.map(l => l.id));
@@ -29,12 +30,23 @@ export default function App() {
   const [scriptUrl, setScriptUrl] = useState(() => localStorage.getItem('rh_script_url') || '');
   const [view, setView] = useState('list');
   const [listings, setListings] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('rh_listings') || '[]'); } catch { return []; }
+    try {
+      const saved = JSON.parse(localStorage.getItem('rh_listings') || '[]');
+      if (saved.length > 0) return saved;
+    } catch { /* fall through to sample */ }
+    const hasOrigin = !!localStorage.getItem('rh_origin_input');
+    return hasOrigin ? [] : SAMPLE_LISTINGS;
   });
   const [origin, setOrigin] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('rh_origin') || 'null'); } catch { return null; }
+    try {
+      const saved = JSON.parse(localStorage.getItem('rh_origin') || 'null');
+      if (saved) return saved;
+    } catch { /* fall through to sample */ }
+    return SAMPLE_ORIGIN;
   });
-  const [originInput, setOriginInput] = useState(() => localStorage.getItem('rh_origin_input') || '');
+  const [originInput, setOriginInput] = useState(
+    () => localStorage.getItem('rh_origin_input') || SAMPLE_ORIGIN.address
+  );
   const [chatText, setChatText] = useState('');
   const [extracting, setExtracting] = useState(false);
   const [extractError, setExtractError] = useState('');
