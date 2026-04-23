@@ -1,5 +1,5 @@
 const COLS = [
-  'id','agent','address','type','price','priceDiscounted','includesUtilities',
+  'id','agent','address','type','price','priceMax','includesUtilities',
   'amenities','pros','cons','moveInDate','description','lat','lng',
   'resolvedAddress','distance','commute_walking','commute_transit','commute_driving',
   'status','geocodeError',
@@ -31,7 +31,7 @@ function rowToListing(obj) {
   delete l.commute_walking;
   delete l.commute_transit;
   delete l.commute_driving;
-  ['price','priceDiscounted','lat','lng','distance'].forEach(k => {
+  ['price','priceMax','lat','lng','distance'].forEach(k => {
     l[k] = l[k] !== '' && l[k] != null ? Number(l[k]) : null;
   });
   l.includesUtilities = l.includesUtilities === 'true' || l.includesUtilities === true;

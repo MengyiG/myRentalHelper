@@ -16,7 +16,7 @@ function toFormState(data) {
     _lng: data.lng || null,
     type: data.type || '',
     price: data.price ?? '',
-    priceDiscounted: data.priceDiscounted ?? '',
+    priceMax: data.priceMax ?? (data.priceDiscounted ?? ''),
     includesUtilities: data.includesUtilities || false,
     amenities: Array.isArray(data.amenities) ? data.amenities.join(', ') : (data.amenities || ''),
     pros: Array.isArray(data.pros) ? data.pros.join(', ') : (data.pros || ''),
@@ -131,7 +131,7 @@ export default function ManualAddForm({ initial, apiKey, origin, knownAgents = [
         _lat: prev._lat, _lng: prev._lng,
         type: prev.type || parsed.type || '',
         price: prev.price !== '' ? prev.price : (parsed.price ?? ''),
-        priceDiscounted: prev.priceDiscounted !== '' ? prev.priceDiscounted : (parsed.priceDiscounted ?? ''),
+        priceMax: prev.priceMax !== '' ? prev.priceMax : (parsed.priceMax ?? ''),
         includesUtilities: prev.includesUtilities || parsed.includesUtilities || false,
         amenities: prev.amenities || (parsed.amenities?.join(', ') ?? ''),
         pros: prev.pros || (parsed.pros?.join(', ') ?? ''),
@@ -156,7 +156,7 @@ export default function ManualAddForm({ initial, apiKey, origin, knownAgents = [
       lng: form._lng || null,
       type: form.type.trim(),
       price: form.price !== '' ? Number(form.price) : null,
-      priceDiscounted: form.priceDiscounted !== '' ? Number(form.priceDiscounted) : null,
+      priceMax: form.priceMax !== '' ? Number(form.priceMax) : null,
       includesUtilities: form.includesUtilities,
       amenities: parseList(form.amenities),
       pros: parseList(form.pros),
@@ -307,8 +307,8 @@ export default function ManualAddForm({ initial, apiKey, origin, knownAgents = [
             </div>
 
             <div className="form-field">
-              <label>{tr('formPriceDiscounted')}</label>
-              <input type="number" min="0" value={form.priceDiscounted} onChange={e => set('priceDiscounted', e.target.value)} placeholder="1800" />
+              <label>{tr('formPriceMax')}</label>
+              <input type="number" min="0" value={form.priceMax} onChange={e => set('priceMax', e.target.value)} placeholder="2200" />
             </div>
 
             <div className="form-field checkbox-field">

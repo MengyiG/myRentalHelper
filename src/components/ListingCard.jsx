@@ -13,7 +13,7 @@ export default function ListingCard({ listing, index, onEdit, onDelete, onRecalc
   const [expanded, setExpanded] = useState(false);
 
   const color = markerColor(index);
-  const { id, agent, address, type, price, priceDiscounted, includesUtilities,
+  const { id, agent, address, type, price, priceMax, includesUtilities,
     amenities, pros, cons, moveInDate, description, distance, commute, status, geocodeError, resolvedAddress } = listing;
 
   const handleDelete = () => {
@@ -61,10 +61,11 @@ export default function ListingCard({ listing, index, onEdit, onDelete, onRecalc
         <div className="card-top-row">
           <div className="card-address-title">{address || '—'}</div>
           <div className="card-price-block">
-            {priceDiscounted != null ? (
+            {price != null && priceMax != null && priceMax !== price ? (
               <>
-                <span className="price-original-sm">{formatPrice(price)}</span>
-                <span className="price-discounted-lg">{formatPrice(priceDiscounted)}</span>
+                <span className="price-main-lg">{formatPrice(price)}</span>
+                <span className="price-range-sep">–</span>
+                <span className="price-main-lg">{formatPrice(priceMax)}</span>
               </>
             ) : price != null ? (
               <span className="price-main-lg">{formatPrice(price)}</span>

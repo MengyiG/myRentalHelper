@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo } from 'react';
+import { useEffect, useRef, useMemo, useState } from 'react';
 import { markerColor } from '../utils/distance.js';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -43,8 +43,7 @@ function buildPopupHtml(listing, tr) {
       <div style="color:#555;margin-bottom:6px">${listing.address}</div>
       <div style="margin-bottom:4px">
         <strong>${listing.agent || ''}</strong>
-        ${listing.price ? `&nbsp;·&nbsp;<span style="color:#546B41;font-weight:600">${fmt(listing.price)}/mo</span>` : ''}
-        ${listing.priceDiscounted ? `&nbsp;<span style="color:#2E7D32;font-weight:600">(${fmt(listing.priceDiscounted)})</span>` : ''}
+        ${listing.price ? `&nbsp;·&nbsp;<span style="color:#4D6FA5;font-weight:600">${fmt(listing.price)}${listing.priceMax && listing.priceMax !== listing.price ? ` – ${fmt(listing.priceMax)}` : ''}/mo</span>` : ''}
       </div>
       ${listing.distance != null ? `<div>📍 ${fmtDist(listing.distance)}</div>` : ''}
       ${listing.commute?.walking != null ? `<div style="margin-top:4px">🚶 ${listing.commute.walking}min &nbsp; 🚌 ${listing.commute.transit ?? '—'}min &nbsp; 🚗 ${listing.commute.driving ?? '—'}min</div>` : ''}
@@ -58,10 +57,16 @@ export default function MapView({ listings, origin, tr, lang }) {
   const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
   const linesRef = useRef([]);
+  const [agentFilter, setAgentFilter] = useState('');
+
+  const agents = useMemo(
+    () => [...new Set(listings.map(l => l.agent).filter(Boolean))].sort(),
+    [listings]
+  );
 
   const geocodedListings = useMemo(
-    () => listings.filter(l => l.lat != null && l.lng != null),
-    [listings]
+    () => listings.filter(l => l.lat != null && l.lng != null && (!agentFilter || l.agent === agentFilter)),
+    [listings, agentFilter]
   );
 
   useEffect(() => {
@@ -108,9 +113,16 @@ export default function MapView({ listings, origin, tr, lang }) {
           .addTo(map);
         markersRef.current.push(marker);
 
+        // White outline underneath for contrast
+        const lineOutline = L.polyline(
+          [[origin.lat, origin.lng], [listing.lat, listing.lng]],
+          { color: '#ffffff', weight: 5, opacity: 0.7, dashArray: '8 5' }
+        ).addTo(map);
+        linesRef.current.push(lineOutline);
+
         const line = L.polyline(
           [[origin.lat, origin.lng], [listing.lat, listing.lng]],
-          { color, weight: 1.5, dashArray: '6 4', opacity: 0.65 }
+          { color, weight: 3, dashArray: '8 5', opacity: 0.92 }
         ).addTo(map);
         linesRef.current.push(line);
       });
@@ -154,6 +166,25 @@ export default function MapView({ listings, origin, tr, lang }) {
 
   return (
     <div className="map-wrapper">
+      {agents.length > 1 && (
+        <div className="agent-filter-bar">
+          <button
+            className={`agent-pill ${agentFilter === '' ? 'active' : ''}`}
+            onClick={() => setAgentFilter('')}
+          >
+            {lang === 'zh' ? '全部' : 'All'}
+          </button>
+          {agents.map(name => (
+            <button
+              key={name}
+              className={`agent-pill ${agentFilter === name ? 'active' : ''}`}
+              onClick={() => setAgentFilter(a => a === name ? '' : name)}
+            >
+              {name}
+            </button>
+          ))}
+        </div>
+      )}
       <div ref={mapRef} className="map-container" />
 
       {/* Legend */}

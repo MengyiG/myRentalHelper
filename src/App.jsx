@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import Header from './components/Header.jsx';
+import OriginCard from './components/OriginCard.jsx';
 import InputPanel from './components/InputPanel.jsx';
 import ListingList from './components/ListingList.jsx';
 import MapView from './components/MapView.jsx';
@@ -313,19 +314,22 @@ export default function App() {
       <div className="workspace">
         <aside className={`sidebar ${sidebarOpen ? '' : 'closed'}`}>
           <div className="sidebar-inner">
-            <InputPanel
-              chatText={chatText}
-              onChatTextChange={setChatText}
-              originInput={originInput}
-              onOriginInputChange={setOriginInput}
-              origin={origin}
-              onGeocodeOrigin={handleGeocodeOrigin}
-              onExtract={handleExtract}
-              onManualAdd={() => { setEditingListing(null); setShowManualForm(true); }}
-              extracting={extracting}
-              extractError={extractError}
-              tr={tr}
-            />
+            <div className="sidebar-scroll-area">
+              <InputPanel
+                chatText={chatText}
+                onChatTextChange={setChatText}
+                originInput={originInput}
+                onOriginInputChange={setOriginInput}
+                origin={origin}
+                onGeocodeOrigin={handleGeocodeOrigin}
+                onExtract={handleExtract}
+                onManualAdd={() => { setEditingListing(null); setShowManualForm(true); }}
+                extracting={extracting}
+                extractError={extractError}
+                tr={tr}
+              />
+            </div>
+            <OriginCard origin={origin} tr={tr} />
           </div>
         </aside>
 

@@ -9,8 +9,8 @@ Return ONLY a valid JSON array (no markdown, no explanation). Each object must h
   "agent": "Name",      // Agent's name
   "address": "Full address with city, state/province", // Complete as much as possible
   "type": "1B1B",       // Unit type: Studio / 1B1B / 2B1B / 2B2B / 3B2B etc.
-  "price": 2000,        // Monthly rent (number, no symbols)
-  "priceDiscounted": null, // Discounted price if mentioned, else null
+  "price": 2000,        // Monthly rent lower bound (number, no symbols)
+  "priceMax": null,     // Upper bound if a price range is mentioned, else null
   "includesUtilities": false, // true if rent includes water/electricity
   "amenities": ["In-unit W/D", "Gym", "Doorman", "Parking"], // Array of strings
   "pros": ["Near transit"],   // Advantages mentioned
@@ -36,7 +36,7 @@ Fields:
   "address": "full address with city and state, complete as much as possible",
   "type": "Studio / 1B1B / 2B1B / 2B2B / 3B2B or empty string",
   "price": number or null,
-  "priceDiscounted": number or null,
+  "priceMax": number or null,
   "includesUtilities": boolean,
   "amenities": ["array of strings"],
   "pros": ["array of strings"],
