@@ -2,7 +2,6 @@ export const MARKER_COLORS = [
   '#4D6FA5', // blue
   '#2E8A7A', // teal
   '#5A8A3E', // green
-  '#8A6B2E', // amber
   '#C06030', // orange
   '#A84040', // red
   '#7040A0', // purple
