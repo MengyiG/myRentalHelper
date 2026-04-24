@@ -54,6 +54,7 @@ export default function App() {
   const [editingListing, setEditingListing] = useState(null);
   const [notification, setNotification] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [gsLoading, setGsLoading] = useState(() => !!localStorage.getItem('rh_script_url'));
 
   // true after initial data load (GS or localStorage) — prevents saving before load finishes
   const gsReadyRef = useRef(false);
@@ -74,7 +75,10 @@ export default function App() {
 
   // Apply theme
   useEffect(() => {
+    document.documentElement.classList.add('theme-transitioning');
     document.documentElement.setAttribute('data-theme', theme);
+    const t = setTimeout(() => document.documentElement.classList.remove('theme-transitioning'), 250);
+    return () => clearTimeout(t);
   }, [theme]);
 
   // On mount: load from Google Sheets if configured.
@@ -101,7 +105,7 @@ export default function App() {
       .catch(() => {
         // Keep localStorage fallback data already in state
       })
-      .finally(() => { gsReadyRef.current = true; });
+      .finally(() => { gsReadyRef.current = true; setGsLoading(false); });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Persist listings → GS (debounced) or localStorage
@@ -272,7 +276,10 @@ export default function App() {
         ? { ...data, lat: null, lng: null, resolvedAddress: null }
         : { ...data, resolvedAddress: null };
 
-      setListings(prev => prev.map(l => l.id === editingListing.id ? { ...l, ...processData } : l));
+      setListings(prev => prev.map(l => {
+        if (l.id === editingListing.id) return { ...l, ...processData };
+        return l;
+      }));
 
       if (addressChanged || coordsChanged) {
         processListing({ ...editingListing, ...processData, status: 'pending' }, null);
@@ -361,7 +368,14 @@ export default function App() {
         </button>
 
         <main className="content-area">
-          {view === 'list' ? (
+          {gsLoading ? (
+            <div className="gs-loading">
+              <div className="gs-loading-spinner" />
+              <p className="gs-loading-text">
+                {lang === 'zh' ? '正在从 Google Sheets 加载数据…' : 'Loading from Google Sheets…'}
+              </p>
+            </div>
+          ) : view === 'list' ? (
             <ListingList
               listings={listings}
               origin={origin}
