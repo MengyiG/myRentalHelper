@@ -27,33 +27,6 @@ export default function Header({ lang, theme, view, apiKey, scriptUrl, distanceU
       </div>
 
       <div className="header-right">
-        {/* View toggle */}
-        <div className="toggle-group">
-          <button
-            className={`toggle-btn ${view === 'list' ? 'active' : ''}`}
-            onClick={() => onViewChange('list')}
-            title={tr('viewList')}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
-              <line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/>
-              <line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
-            </svg>
-            <span>{tr('viewList')}</span>
-          </button>
-          <button
-            className={`toggle-btn ${view === 'map' ? 'active' : ''}`}
-            onClick={() => onViewChange('map')}
-            title={tr('viewMap')}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
-              <line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/>
-            </svg>
-            <span>{tr('viewMap')}</span>
-          </button>
-        </div>
-
         {/* Theme toggle */}
         <button
           className="icon-btn"

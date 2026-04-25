@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import Header from './components/Header.jsx';
+import NavRail from './components/NavRail.jsx';
 import OriginCard from './components/OriginCard.jsx';
 import InputPanel from './components/InputPanel.jsx';
 import ListingList from './components/ListingList.jsx';
@@ -336,6 +337,12 @@ export default function App() {
       />
 
       <div className="workspace">
+        <NavRail
+          view={view}
+          onViewChange={v => setView(v)}
+          listCount={listings.filter(l => !l.archived).length}
+        />
+
         <aside className={`sidebar ${sidebarOpen ? '' : 'closed'}`}>
           <div className="sidebar-inner">
             <div className="sidebar-scroll-area">
@@ -391,13 +398,23 @@ export default function App() {
               lang={lang}
               distanceUnit={distanceUnit}
             />
-          ) : (
+          ) : view === 'map' ? (
             <MapView
               listings={listings}
               origin={origin}
               tr={tr}
               lang={lang}
             />
+          ) : (
+            <div className="sheets-placeholder">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <line x1="3" y1="9" x2="21" y2="9"/>
+                <line x1="3" y1="15" x2="21" y2="15"/>
+                <line x1="9" y1="9" x2="9" y2="21"/>
+              </svg>
+              <p>{lang === 'zh' ? 'Sheets 同步即将上线' : 'Sheets sync coming soon'}</p>
+            </div>
           )}
         </main>
       </div>
