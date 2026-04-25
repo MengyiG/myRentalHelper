@@ -35,6 +35,13 @@ export default function ListingList({ listings, origin, onEdit, onDelete, onReca
 
   const cycleSortOrder = () => setSortOrder(o => o === '' ? 'asc' : o === 'asc' ? 'desc' : '');
 
+  const handleUnselectAll = () => {
+    Object.values(closeTimers.current).forEach(clearTimeout);
+    closeTimers.current = {};
+    setSelectedIds([]);
+    setClosingIds(new Set());
+  };
+
   const closePanel = (id) => {
     setClosingIds(prev => new Set([...prev, id]));
     closeTimers.current[id] = setTimeout(() => {
@@ -145,6 +152,12 @@ export default function ListingList({ listings, origin, onEdit, onDelete, onReca
             <button className="price-filter-clear" onClick={() => setPriceFilter('')}>×</button>
           )}
         </div>
+
+        {selectedIds.length > 0 && (
+          <button className="unselect-all-btn" onClick={handleUnselectAll}>
+            {lang === 'zh' ? '取消全选' : 'Unselect All'}
+          </button>
+        )}
       </div>
 
       <div className="listing-list-layout">
