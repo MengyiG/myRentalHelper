@@ -18,7 +18,11 @@ A personal rental listing manager. Paste chat logs with agents and let AI extrac
 
 - **AI Extraction** — Paste agent chat logs; automatically parses address, unit type, rent, amenities, and more
 - **Manual Entry** — Add listings by hand
+- **Select & Compare** — Select multiple listings to view their full details side-by-side
+- **Share** — Copy selected listings as formatted text, or download a PDF via the browser print dialog
 - **Commute Calculation** — Walking, driving, and estimated transit times from your origin (powered by OSRM)
+- **Filter & Sort** — Filter by agent or max price; sort by distance
+- **Archive** — Archive listings you're no longer considering without deleting them
 - **Map View** — See all listings on an interactive map
 - **Google Sheets Sync** — Data syncs to Google Sheets ~1.5 s after each change
 - **Dark Mode / Language Toggle** — Chinese & English UI
@@ -91,16 +95,6 @@ Output is in `dist/` — deploy as a static site.
 - OSRM routing may differ from Google Maps and does not include live traffic
 
 
-## todo
-
-- [ ] **Share** — Generate a shareable read-only link so roommates or family can view your shortlist without needing an account
-- [ ] **Export as PDF** — One-click PDF report of all listings with map, commute summary, pros/cons, and price comparison
-- [ ] **Listing status** — Track each listing through stages: Interested → Visited → Applied → Offered → Rejected
-- [ ] **AI ranking** — Let Claude score and rank listings against your stated priorities (budget, commute, amenities)
-- [ ] **Photo attachments** — Attach photos from apartment tours to each listing card
-- [ ] **Neighborhood score** — Pull walkability, transit, and safety scores for each address automatically
-- [ ] **Mobile / PWA** — Install as a home screen app on phone for quick access during in-person tours
-
 ---
 
 # Yisy - 找房很容易
@@ -117,7 +111,11 @@ Output is in `dist/` — deploy as a static site.
 
 - **AI 提取**：粘贴与中介的聊天记录，自动解析房源地址、户型、租金、配套设施等信息
 - **手动添加**：支持手动录入房源
+- **选择对比**：选中多个房源，并排查看完整详情
+- **分享**：将选中房源复制为格式化文本，或通过浏览器打印对话框下载为 PDF
 - **通勤计算**：自动计算距原点的步行、驾车、公交时间（基于 OSRM，公交为估算值）
+- **筛选与排序**：按中介或最高租金筛选，按距离排序
+- **归档**：将暂不考虑的房源归档，无需删除
 - **地图视图**：在地图上查看所有房源分布
 - **Google Sheets 同步**：数据实时同步到 Google Sheets，每次变化后约 1.5 秒写入
 - **深色模式 / 中英文切换**
@@ -188,13 +186,3 @@ npm run build
 - Anthropic API Key 直接从浏览器发起请求，需在 Anthropic 控制台开启 `dangerous-direct-browser-access`
 - 公交通勤时间为基于直线距离的估算值，非实时数据
 - OSRM 路线数据可能与 Google Maps 有差异，不含实时路况
-
-## 路线图
-
-- [ ] **分享** — 生成只读分享链接，让室友或家人无需登录即可查看你的房源列表
-- [ ] **导出 PDF** — 一键生成包含地图、通勤摘要、优缺点和价格对比的 PDF 报告
-- [ ] **房源状态** — 跟踪每个房源的进度：感兴趣 → 已看房 → 已申请 → 已报价 → 已拒绝
-- [ ] **AI 排名** — 让 Claude 根据你的优先级（预算、通勤、配套）对房源打分排序
-- [ ] **照片附件** — 为每个房源卡片附上看房时拍的照片
-- [ ] **社区评分** — 自动获取每个地址的步行指数、交通和安全评分
-- [ ] **手机端 / PWA** — 支持安装到手机主屏，方便看房时随时查阅
