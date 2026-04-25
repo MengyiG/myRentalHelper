@@ -77,12 +77,12 @@ export default function ListingList({ listings, origin, onEdit, onDelete, onReca
           <h2 className="list-title">{tr('listingsTitle')}</h2>
           <span className="list-count">{filtered.length}{isFiltered ? `/${listings.length}` : ''}</span>
         </div>
-        {selectedIds.length > 0 && (
-          <div className="compare-header">
-            <span className="compare-title">Select &amp; Compare</span>
+        <div className="compare-header">
+          <span className="compare-title">Select &amp; Compare</span>
+          {selectedIds.length > 0 && (
             <span className="compare-count">{selectedIds.length}</span>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       <div className="agent-filter-bar">
@@ -157,34 +157,41 @@ export default function ListingList({ listings, origin, onEdit, onDelete, onReca
                 onDelete={onDelete}
                 onRecalculate={onRecalculate}
                 tr={tr}
+                lang={lang}
                 distanceUnit={distanceUnit}
               />
             ))}
           </div>
         </div>
 
-        {selectedIds.length > 0 && (
-          <div className="detail-panels-column">
-            {selectedIds.map(id => {
-              const listing = listings.find(l => l.id === id);
-              if (!listing) return null;
-              return (
-                <div
-                  key={id}
-                  className={`detail-panel-wrap${closingIds.has(id) ? ' detail-panel-wrap--closing' : ''}`}
-                >
-                  <DetailPanel
-                    listing={listing}
-                    index={listings.indexOf(listing)}
-                    onClose={() => closePanel(id)}
-                    tr={tr}
-                    distanceUnit={distanceUnit}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        )}
+        <div className="detail-panels-column">
+          {selectedIds.length === 0 ? (
+            <div className="detail-panels-empty">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+              </svg>
+              <p>{lang === 'zh' ? '选择卡片查看详情或进行对比' : 'Select a card to view details or compare'}</p>
+            </div>
+          ) : selectedIds.map(id => {
+            const listing = listings.find(l => l.id === id);
+            if (!listing) return null;
+            return (
+              <div
+                key={id}
+                className={`detail-panel-wrap${closingIds.has(id) ? ' detail-panel-wrap--closing' : ''}`}
+              >
+                <DetailPanel
+                  listing={listing}
+                  index={listings.indexOf(listing)}
+                  onClose={() => closePanel(id)}
+                  tr={tr}
+                  distanceUnit={distanceUnit}
+                />
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

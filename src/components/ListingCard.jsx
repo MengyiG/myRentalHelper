@@ -8,7 +8,7 @@ const statusIcons = {
   geocodeError: '⚠️',
 };
 
-export default function ListingCard({ listing, index, isSelected, onSelect, onEdit, onDelete, onRecalculate, tr, distanceUnit = 'km' }) {
+export default function ListingCard({ listing, index, isSelected, onSelect, onEdit, onDelete, onRecalculate, tr, lang = 'zh', distanceUnit = 'km' }) {
   const { id, agent, address, type, price, priceMax, includesUtilities,
     amenities, moveInDate, distance, commute, status, geocodeError } = listing;
   const color = agentColor(agent);
@@ -60,30 +60,42 @@ export default function ListingCard({ listing, index, isSelected, onSelect, onEd
               </svg>
             </span>
           ) : <span />}
-          <span className="card-hero-badge">{id}</span>
         </div>
-        <span className="card-hero-agent">{agent || '—'}</span>
+        {price != null && (
+          <div className="card-hero-price">
+            {price != null && priceMax != null && priceMax !== price
+              ? `${formatPrice(price)} – ${formatPrice(priceMax)}`
+              : formatPrice(price)}
+            <span className="card-hero-price-period">{tr('perMonth')}</span>
+          </div>
+        )}
+        <div className="card-hero-agent-row">
+          <span className="card-hero-agent">{agent || '—'}</span>
+          <div className="card-hero-actions" onClick={e => e.stopPropagation()}>
+            {!isProcessing && (
+              <button className="hero-action-btn" onClick={() => onRecalculate(listing)} title={lang === 'zh' ? '重新定位' : 'Re-geocode'}>↻</button>
+            )}
+            <button className="hero-action-btn" onClick={() => onEdit(listing)} title={tr('edit')}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </button>
+            <button className="hero-action-btn danger" onClick={handleDelete} title={tr('delete')}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
         <span className="card-hero-watermark">{idNum}</span>
       </div>
 
       {/* Content */}
       <div className="card-content">
-        {/* Address + Price */}
-        <div className="card-top-row">
-          <div className="card-address-title">{address || '—'}</div>
-          <div className="card-price-block">
-            {price != null && priceMax != null && priceMax !== price ? (
-              <>
-                <span className="price-main-lg">{formatPrice(price)}</span>
-                <span className="price-range-sep">–</span>
-                <span className="price-main-lg">{formatPrice(priceMax)}</span>
-              </>
-            ) : price != null ? (
-              <span className="price-main-lg">{formatPrice(price)}</span>
-            ) : null}
-            {price != null && <span className="price-period-sm">{tr('perMonth')}</span>}
-          </div>
-        </div>
+        {/* Address */}
+        <div className="card-address-title">{address || '—'}</div>
 
         {/* Type + utilities + move-in + distance */}
         <div className="card-meta-row">
@@ -143,37 +155,6 @@ export default function ListingCard({ listing, index, isSelected, onSelect, onEd
           </div>
         )}
 
-        {/* Footer actions */}
-        <div className="card-footer" onClick={e => e.stopPropagation()}>
-          {!isProcessing && (
-            <button className="icon-btn small" onClick={() => onRecalculate(listing)} title="重新定位 / Re-geocode">↻</button>
-          )}
-          <button className="icon-btn small" onClick={() => onEdit(listing)} title={tr('edit')}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-            </svg>
-          </button>
-          <button className="icon-btn small danger" onClick={handleDelete} title={tr('delete')}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="3 6 5 6 21 6"/>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-            </svg>
-          </button>
-          <button
-            className="expand-btn"
-            onClick={e => { e.stopPropagation(); onSelect(listing); }}
-            title={isSelected ? '关闭详情' : '查看详情'}
-          >
-            <svg
-              width="14" height="14" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2"
-              style={{ transform: isSelected ? 'rotate(90deg)' : 'rotate(-90deg)', transition: 'transform 0.2s' }}
-            >
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
-          </button>
-        </div>
       </div>
     </article>
   );

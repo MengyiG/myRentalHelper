@@ -108,7 +108,7 @@ export default function MapView({ listings, origin, tr, lang }) {
       // Listing markers and lines
       geocodedListings.forEach((listing, i) => {
         const color = markerColor(i);
-        const marker = L.marker([listing.lat, listing.lng], { icon: createNumberedIcon(listing.id, color) })
+        const marker = L.marker([listing.lat, listing.lng], { icon: createNumberedIcon(i + 1, color) })
           .bindPopup(buildPopupHtml(listing, tr), { maxWidth: 280 })
           .addTo(map);
         markersRef.current.push(marker);
