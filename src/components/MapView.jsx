@@ -60,12 +60,12 @@ export default function MapView({ listings, origin, tr, lang }) {
   const [agentFilter, setAgentFilter] = useState('');
 
   const agents = useMemo(
-    () => [...new Set(listings.map(l => l.agent).filter(Boolean))].sort(),
+    () => [...new Set(listings.filter(l => !l.archived).map(l => l.agent).filter(Boolean))].sort(),
     [listings]
   );
 
   const geocodedListings = useMemo(
-    () => listings.filter(l => l.lat != null && l.lng != null && (!agentFilter || l.agent === agentFilter)),
+    () => listings.filter(l => !l.archived && l.lat != null && l.lng != null && (!agentFilter || l.agent === agentFilter)),
     [listings, agentFilter]
   );
 

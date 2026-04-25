@@ -304,6 +304,10 @@ export default function App() {
     setListings(prev => prev.filter(l => l.id !== id));
   }, []);
 
+  const handleArchive = useCallback((id) => {
+    setListings(prev => prev.map(l => l.id === id ? { ...l, archived: !l.archived } : l));
+  }, []);
+
   const handleEdit = useCallback((listing) => {
     setEditingListing(listing);
     setShowManualForm(true);
@@ -382,6 +386,7 @@ export default function App() {
               onEdit={handleEdit}
               onDelete={handleDelete}
               onRecalculate={handleRecalculate}
+              onArchive={handleArchive}
               tr={tr}
               lang={lang}
               distanceUnit={distanceUnit}

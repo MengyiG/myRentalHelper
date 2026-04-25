@@ -95,6 +95,10 @@ export const t = {
     clipParseError: '解析失败：',
     addressConfirmed: '已确认',
     resolvedAs: '定位到：',
+    archive: '归档',
+    unarchive: '取消归档',
+    archiveSection: '归档房源',
+    confirmArchive: '确认归档此房源？（可随时取消）',
   },
   en: {
     appTitle: 'Yisy',
@@ -192,6 +196,10 @@ export const t = {
     clipParseError: 'Parse failed: ',
     addressConfirmed: 'Confirmed',
     resolvedAs: 'Resolved as:',
+    archive: 'Archive',
+    unarchive: 'Restore',
+    archiveSection: 'Archived',
+    confirmArchive: 'Archive this listing? (You can restore it anytime)',
   }
 };
 

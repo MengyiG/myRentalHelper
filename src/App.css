@@ -1973,6 +1973,68 @@ body {
 
 [data-theme="dark"] .leaflet-popup-tip { background: var(--card) !important; }
 
+/* ===== Archive Section ===== */
+.archive-section {
+  margin-top: 24px;
+  border-top: 1px dashed var(--border-strong);
+  padding-top: 16px;
+}
+
+.archive-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  width: 100%;
+  text-align: left;
+}
+.archive-toggle:hover {
+  background: var(--surface);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+.archive-toggle-count {
+  background: var(--border-strong);
+  color: var(--text-muted);
+  border-radius: 10px;
+  padding: 1px 7px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+.archive-chevron {
+  margin-left: auto;
+  transition: transform 0.2s;
+}
+.archive-chevron--open {
+  transform: rotate(180deg);
+}
+
+.cards-grid--archived {
+  margin-top: 14px;
+  opacity: 0.65;
+  filter: grayscale(30%);
+  transition: opacity 0.15s;
+}
+.cards-grid--archived:hover {
+  opacity: 0.85;
+}
+
+.lc-btn--unarchive:hover {
+  background: rgba(46, 125, 50, 0.75);
+  border-color: rgba(46, 125, 50, 0.75);
+}
+
 /* ===== Scrollbar ===== */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }

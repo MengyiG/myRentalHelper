@@ -8,7 +8,7 @@ const statusIcons = {
   geocodeError: '⚠️',
 };
 
-export default function ListingCard({ listing, index, isSelected, onSelect, onEdit, onDelete, onRecalculate, tr, lang = 'zh', distanceUnit = 'km' }) {
+export default function ListingCard({ listing, index, isSelected, onSelect, onEdit, onDelete, onRecalculate, onArchive, tr, lang = 'zh', distanceUnit = 'km' }) {
   const { id, agent, address, type, price, priceMax, includesUtilities,
     moveInDate, distance, commute, status, geocodeError } = listing;
   const color = agentColor(agent);
@@ -16,6 +16,11 @@ export default function ListingCard({ listing, index, isSelected, onSelect, onEd
   const handleDelete = (e) => {
     e.stopPropagation();
     if (window.confirm(tr('confirmDelete'))) onDelete(id);
+  };
+
+  const handleArchive = (e) => {
+    e.stopPropagation();
+    onArchive(id);
   };
 
   const formatDist = (d) => {
@@ -73,6 +78,28 @@ export default function ListingCard({ listing, index, isSelected, onSelect, onEd
                   <polyline points="20 6 9 17 4 12"/>
                 </svg>
               </span>
+            )}
+            {onArchive && (
+              <button
+                className={`lc-btn${listing.archived ? ' lc-btn--unarchive' : ''}`}
+                onClick={handleArchive}
+                title={listing.archived ? tr('unarchive') : tr('archive')}
+              >
+                {listing.archived ? (
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="21 8 21 21 3 21 3 8"/>
+                    <rect x="1" y="3" width="22" height="5" rx="1"/>
+                    <polyline points="10 14 12 12 14 14"/>
+                    <line x1="12" y1="12" x2="12" y2="17"/>
+                  </svg>
+                ) : (
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="21 8 21 21 3 21 3 8"/>
+                    <rect x="1" y="3" width="22" height="5" rx="1"/>
+                    <line x1="10" y1="12" x2="14" y2="12"/>
+                  </svg>
+                )}
+              </button>
             )}
             <button className="lc-btn" onClick={() => onRecalculate(listing)} title={lang === 'zh' ? '重新定位' : 'Re-geocode'}>↻</button>
             <button className="lc-btn" onClick={() => onEdit(listing)} title={tr('edit')}>

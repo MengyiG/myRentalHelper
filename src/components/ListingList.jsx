@@ -4,17 +4,21 @@ import DetailPanel from './DetailPanel.jsx';
 
 const ANIM_MS = 220;
 
-export default function ListingList({ listings, origin, onEdit, onDelete, onRecalculate, tr, lang, distanceUnit }) {
+export default function ListingList({ listings, origin, onEdit, onDelete, onRecalculate, onArchive, tr, lang, distanceUnit }) {
   const [agentFilter, setAgentFilter] = useState('');
   const [selectedIds, setSelectedIds] = useState([]);
   const [closingIds, setClosingIds] = useState(new Set());
   const [priceFilter, setPriceFilter] = useState('');
   const [sortOrder, setSortOrder] = useState(''); // '' | 'asc' | 'desc'
+  const [archiveOpen, setArchiveOpen] = useState(false);
   const closeTimers = useRef({});
 
-  const agents = [...new Set(listings.map(l => l.agent).filter(Boolean))].sort();
+  const activeListings = listings.filter(l => !l.archived);
+  const archivedListings = listings.filter(l => l.archived);
 
-  const agentFiltered = agentFilter ? listings.filter(l => l.agent === agentFilter) : listings;
+  const agents = [...new Set(activeListings.map(l => l.agent).filter(Boolean))].sort();
+
+  const agentFiltered = agentFilter ? activeListings.filter(l => l.agent === agentFilter) : activeListings;
 
   const priceNum = priceFilter !== '' ? Number(priceFilter) : null;
   const priceFiltered = (priceNum != null && !isNaN(priceNum))
@@ -61,7 +65,7 @@ export default function ListingList({ listings, origin, onEdit, onDelete, onReca
     return () => Object.values(timers).forEach(clearTimeout);
   }, []);
 
-  if (listings.length === 0) {
+  if (activeListings.length === 0 && archivedListings.length === 0) {
     return (
       <div className="empty-state">
         <div className="empty-icon">🏠</div>
@@ -75,7 +79,7 @@ export default function ListingList({ listings, origin, onEdit, onDelete, onReca
       <div className="listing-top-row">
         <div className="list-header">
           <h2 className="list-title">{tr('listingsTitle')}</h2>
-          <span className="list-count">{filtered.length}{isFiltered ? `/${listings.length}` : ''}</span>
+          <span className="list-count">{filtered.length}{isFiltered ? `/${activeListings.length}` : ''}</span>
         </div>
         <div className="compare-header">
           <span className="compare-title">Select &amp; Compare</span>
@@ -150,18 +154,63 @@ export default function ListingList({ listings, origin, onEdit, onDelete, onReca
               <ListingCard
                 key={listing.id}
                 listing={listing}
-                index={listings.indexOf(listing)}
+                index={activeListings.indexOf(listing)}
                 isSelected={selectedIds.includes(listing.id) && !closingIds.has(listing.id)}
                 onSelect={handleSelect}
                 onEdit={onEdit}
                 onDelete={onDelete}
                 onRecalculate={onRecalculate}
+                onArchive={onArchive}
                 tr={tr}
                 lang={lang}
                 distanceUnit={distanceUnit}
               />
             ))}
           </div>
+
+          {archivedListings.length > 0 && (
+            <div className="archive-section">
+              <button
+                className="archive-toggle"
+                onClick={() => setArchiveOpen(v => !v)}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="21 8 21 21 3 21 3 8"/>
+                  <rect x="1" y="3" width="22" height="5" rx="1"/>
+                  <line x1="10" y1="12" x2="14" y2="12"/>
+                </svg>
+                {tr('archiveSection')}
+                <span className="archive-toggle-count">{archivedListings.length}</span>
+                <svg
+                  width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+                  className={`archive-chevron${archiveOpen ? ' archive-chevron--open' : ''}`}
+                >
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+              </button>
+
+              {archiveOpen && (
+                <div className="cards-grid cards-grid--archived">
+                  {archivedListings.map((listing) => (
+                    <ListingCard
+                      key={listing.id}
+                      listing={listing}
+                      index={-1}
+                      isSelected={false}
+                      onSelect={() => {}}
+                      onEdit={onEdit}
+                      onDelete={onDelete}
+                      onRecalculate={onRecalculate}
+                      onArchive={onArchive}
+                      tr={tr}
+                      lang={lang}
+                      distanceUnit={distanceUnit}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="detail-panels-column">
