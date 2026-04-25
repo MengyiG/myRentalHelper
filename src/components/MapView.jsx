@@ -1,5 +1,5 @@
 import { useEffect, useRef, useMemo, useState } from 'react';
-import { markerColor } from '../utils/colors.js';
+import { agentColor } from '../utils/colors.js';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -107,7 +107,7 @@ export default function MapView({ listings, origin, tr, lang }) {
 
       // Listing markers and lines
       geocodedListings.forEach((listing, i) => {
-        const color = markerColor(i);
+        const color = agentColor(listing.agent);
         const marker = L.marker([listing.lat, listing.lng], { icon: createNumberedIcon(i + 1, color) })
           .bindPopup(buildPopupHtml(listing, tr), { maxWidth: 280 })
           .addTo(map);
@@ -192,13 +192,28 @@ export default function MapView({ listings, origin, tr, lang }) {
         <div className="map-legend">
           <div className="legend-title">{tr('legend')}</div>
           <div className="legend-item">
-            <span className="legend-dot" style={{ background: '#e53935' }} />
-            <span>{tr('originMarker')}: {origin.address}</span>
+            <span className="legend-marker legend-marker--origin">★</span>
+            <div className="legend-item-body">
+              <span className="legend-agent">{tr('originMarker')}</span>
+              <span className="legend-addr">{origin.address}</span>
+            </div>
           </div>
+          <div className="legend-perf" />
           {geocodedListings.map((l, i) => (
             <div key={l.id} className="legend-item">
-              <span className="legend-dot" style={{ background: markerColor(i) }} />
-              <span><strong>{l.id}</strong> {l.address}</span>
+              <span className="legend-marker" style={{ background: agentColor(l.agent) }}>{i + 1}</span>
+              <div className="legend-item-body">
+                <div className="legend-item-top">
+                  <span className="legend-agent">{l.agent || '—'}</span>
+                  {l.price != null && (
+                    <span className="legend-price">
+                      ${Number(l.price).toLocaleString()}
+                      <span className="legend-price-period">/mo</span>
+                    </span>
+                  )}
+                </div>
+                <span className="legend-addr">{l.address}</span>
+              </div>
             </div>
           ))}
         </div>
